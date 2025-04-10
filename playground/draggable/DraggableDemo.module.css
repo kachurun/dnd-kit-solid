@@ -1,0 +1,79 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 100vh;
+  background-color: #f0f4ff;
+}
+
+.draggableContainer {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  background: #f0f0f0;
+  border-radius: 8px;
+}
+
+.droppableContainer {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.btn:active {
+  cursor: grabbing;
+}
+
+.btn.active {
+  background: #357abd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.droppable {
+  flex: 1;
+  padding: 20px;
+  background: white;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.droppable.over {
+  border-color: #4a90e2;
+  background: #f0f7ff;
+}
+
+.eventLog {
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.logContainer {
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 12px;
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+} 

@@ -51,4 +51,4 @@ pnpm-debug.log*
 *.local
 
 # Playground
-playground/dist/
+/playgrounds

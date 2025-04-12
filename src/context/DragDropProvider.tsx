@@ -1,9 +1,7 @@
 import { DragDropManager, defaultPreset } from '@dnd-kit/dom';
-import { deepEqual } from '@dnd-kit/state';
 import { createEffect, createMemo, onCleanup, splitProps } from 'solid-js';
 
 import { DragDropContext } from './context';
-import { useOnValueChange } from '../hooks/useOnValueChange';
 import { useRenderer } from '../hooks/useRenderer';
 
 import type { DragDropEvents } from '@dnd-kit/abstract';
@@ -85,24 +83,16 @@ export function DragDropProvider(props: Props) {
     });
   });
   
-  useOnValueChange(
-    () => input.plugins ?? defaultPreset.plugins,
-    (plugins) => manager() && (manager().plugins = plugins),
-    deepEqual
-  );
+  createEffect(() => {
+    if (!manager()) {
+      return;
+    }
 
-  useOnValueChange(
-    () => input.sensors ?? defaultPreset.sensors,
-    (sensors) => manager() && (manager().sensors = sensors),
-    deepEqual
-  );
+    manager().plugins = input.plugins ?? defaultPreset.plugins;
+    manager().sensors = input.sensors ?? defaultPreset.sensors;
+    manager().modifiers = input.modifiers ?? defaultPreset.modifiers;
+  });
 
-  useOnValueChange(
-    () => input.modifiers ?? defaultPreset.modifiers,
-    (modifiers) => manager() && (manager().modifiers = modifiers),
-    deepEqual
-  );
-    
   return (
     /* eslint-disable-next-line solid/reactivity */
     <DragDropContext.Provider value={manager()}>

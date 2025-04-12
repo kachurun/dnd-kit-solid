@@ -1,6 +1,5 @@
-import { createSignal, batch, type Accessor, createMemo } from 'solid-js';
+import { createSignal, batch, type Accessor, createMemo, createEffect, on } from 'solid-js';
 
-import { useOnValueChange } from './useOnValueChange';
 import type { DragDropManager } from '@dnd-kit/dom';
 
 type Renderer = DragDropManager['renderer'];
@@ -12,10 +11,10 @@ export function useRenderer(): { renderer: Accessor<Renderer>; trackRendering: (
   let resolver: (() => void) | null = null;
 
   // Resolve rendering promise when transitionCount changes
-  useOnValueChange(transitionCount, () => {
+  createEffect(on(transitionCount, () => {
     resolver?.();
     rendering = null;
-  });
+  }));
 
   const renderer = createMemo<Renderer>(() => ({
       rendering: rendering ?? Promise.resolve()

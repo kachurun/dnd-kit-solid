@@ -1,14 +1,15 @@
 {
-  "name": "sorta",
+  "name": "dnd-kit-solid",
   "version": "0.1.0",
-  "description": "The modern, lightweight, headless sortable library",
+  "description": "The modern, lightweight, headless dnd-kit-solidble library",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "clean": "rm -rf dist",
@@ -17,18 +18,31 @@
     "build:lib": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "dev": "vite playground"
+    "dev": "vite playground",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "sortable",
+    "dnd-kit-solidble",
     "drag",
     "drop",
     "list",
     "reorder",
-    "animation"
+    "animation",
+    "solidjs",
+    "dnd-kit",
+    "sortable",
+    "draggable"
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kachurun/dnd-kit-solid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kachurun/dnd-kit-solid/issues"
+  },
+  "homepage": "https://github.com/kachurun/dnd-kit-solid#readme",
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
@@ -72,10 +86,10 @@
       "import": "./dist/esm/droppable/index.js",
       "require": "./dist/cjs/droppable/index.js"
     },
-    "./sortable": {
-      "types": "./dist/types/sortable/index.d.ts",
-      "import": "./dist/esm/sortable/index.js",
-      "require": "./dist/cjs/sortable/index.js"
+    "./dnd-kit-solidble": {
+      "types": "./dist/types/dnd-kit-solidble/index.d.ts",
+      "import": "./dist/esm/dnd-kit-solidble/index.js",
+      "require": "./dist/cjs/dnd-kit-solidble/index.js"
     },
     "./hooks": {
       "types": "./dist/types/hooks/index.d.ts",

@@ -4,13 +4,71 @@ import { Dynamic } from 'solid-js/web';
 
 import { DragDropContext } from '../context/context';
 import { useDragDropManager } from '../context/useDragDropManager';
-import { wrapSignal } from '../utils/preactSignals';
+import { useDragOperation } from '../hooks/useDragOperation';
 
 import type { Draggable, DragDropManager } from '@dnd-kit/dom';
-import type { JSX } from 'solid-js';
+import type { Accessor, JSX, ValidComponent } from 'solid-js';
 
 function noop() {
   return () => {};
+}
+
+
+export interface Props {
+  class?: string;
+  children: JSX.Element | ((source: Draggable) => JSX.Element);
+  style?: JSX.CSSProperties;
+  tag?: ValidComponent;
+}
+
+
+export function DragOverlay(props: Props) {
+  const [element, setElement] = createSignal<HTMLDivElement>();
+  const manager = useDragDropManager();
+  const patchedManager = usePatchedManager(manager);
+  const dragOperation = useDragOperation();
+  
+  createEffect(() => {
+    if (!dragOperation.source) {
+      setElement(undefined);
+    }
+  });
+    
+  createEffect(() => {
+    const feedback = manager?.plugins.find(
+      (plugin): plugin is Feedback => plugin instanceof Feedback
+    );
+
+    if (!feedback) return;
+
+    feedback.overlay = element();
+
+    onCleanup(() => {
+      feedback.overlay = undefined;
+    });
+  });
+
+  return (
+    <DragDropContext.Provider value={patchedManager()}> 
+      <Show when={dragOperation.source}>
+        { (source: Accessor<Draggable>) => (
+          <Dynamic
+            component={props.tag || 'div'}
+            class={props.class}
+            style={props.style}
+            data-dnd-overlay
+            ref={setElement}
+          >
+            {
+              typeof props.children === 'function' 
+                ? props.children(source())
+                : props.children
+            }
+          </Dynamic>
+        ) }
+      </Show>
+    </DragDropContext.Provider>
+  );
 }
 
 /**
@@ -45,59 +103,4 @@ function usePatchedManager(manager: DragDropManager | null) {
   });
   
   return patchedManager;
-}
-
-export interface Props {
-  class?: string;
-  children: JSX.Element | ((source: Draggable) => JSX.Element);
-  style?: JSX.CSSProperties;
-  tag?: string;
-}
-
-export function DragOverlay(props: Props) {
-  const [element, setElement] = createSignal<HTMLDivElement>();
-  const manager = useDragDropManager();
-  const patchedManager = usePatchedManager(manager);
-  const source = wrapSignal(() => manager?.dragOperation?.source);
-  
-  createEffect(() => {
-    if (!source()) {
-      setElement(undefined);
-    }
-  });
-    
-  createEffect(() => {
-    const feedback = manager?.plugins.find(
-      (plugin): plugin is Feedback => plugin instanceof Feedback
-    );
-
-    if (!feedback) return;
-
-    // TODO element not updating here
-    feedback.overlay = element();
-
-    onCleanup(() => {
-      feedback.overlay = undefined;
-    });
-  });
-
-  return (
-    <DragDropContext.Provider value={patchedManager()}> 
-      <Show when={source()}>
-        {(source) => (
-          <Dynamic
-            component={props.tag || 'div'}
-            ref={setElement}
-            class={props.class}
-            style={props.style}
-            data-dnd-overlay
-          >
-            {typeof props.children === 'function' 
-              ? (props.children as (source: Draggable) => JSX.Element)(source())
-              : props.children}
-          </Dynamic>
-        )}
-      </Show>
-    </DragDropContext.Provider>
-  );
 }

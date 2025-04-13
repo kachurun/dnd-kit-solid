@@ -125,6 +125,181 @@ function App() {
 }
 ```
 
+### Draggable
+
+The `Draggable` component provides a declarative way to create draggable elements. It's a syntax sugar over the `useDraggable` hook.
+
+#### Standalone Usage
+
+The `Draggable` component can be used without a `DragDropProvider`. You have three options:
+
+1. Use with `DragDropProvider` (recommended for multiple draggable / droppable elements):
+
+```tsx
+<DragDropProvider>
+  <Draggable id="item-1">Drag me!</Draggable>
+  <Draggable id="item-2">Drag me too!</Draggable>
+</DragDropProvider>
+```
+
+2. Pass a shared manager:
+
+```tsx
+const manager = new DragDropManager();
+<Draggable id="item-1" manager={manager}>Drag me!</Draggable>
+<Draggable id="item-2" manager={manager}>Drag me too!</Draggable>
+```
+
+3. Use standalone (each instance creates its own manager):
+
+```tsx
+<Draggable id="item-1">Drag me!</Draggable>
+```
+
+> Note: While standalone usage is possible, it's recommended to use `DragDropProvider` or pass a shared manager when working with multiple draggable elements for better performance and stability.
+
+#### Basic Usage
+
+```tsx
+import { Draggable } from "dnd-kit-solid";
+
+function App() {
+  return (
+    <Draggable id="item-1">
+      <div>Drag me!</div>
+    </Draggable>
+  );
+}
+```
+
+#### Using with Function Children
+
+You can use a function as children to access the draggable instance:
+
+```tsx
+function App() {
+  return (
+    <Draggable id="item-1">
+      {({ ref, isDragging }) => (
+        <div ref={ref} style={{ opacity: isDragging() ? 0.5 : 1 }}>
+          Drag me!
+        </div>
+      )}
+    </Draggable>
+  );
+}
+```
+
+#### Custom Tag
+
+You can specify a custom HTML tag to render:
+
+```tsx
+function App() {
+  return (
+    <Draggable id="item-1" tag="button">
+      Click and drag me!
+    </Draggable>
+  );
+}
+```
+
+#### Props
+
+The `Draggable` component accepts all the same props as the `useDraggable` hook, plus:
+
+- `tag`: The HTML tag to render (defaults to 'div')
+- `children`: Either JSX elements or a function that receives the draggable instance
+
+### Droppable
+
+The `Droppable` component provides a declarative way to create droppable targets. It's a syntax sugar over the `useDroppable` hook.
+
+#### Standalone Usage
+
+The `Droppable` component can be used without a `DragDropProvider`. You have three options:
+
+1. Use with `DragDropProvider` (recommended for multiple droppable elements):
+
+```tsx
+<DragDropProvider>
+  <Droppable id="zone-1">Drop here!</Droppable>
+  <Droppable id="zone-2">Or here!</Droppable>
+</DragDropProvider>
+```
+
+2. Pass a shared manager:
+
+```tsx
+const manager = new DragDropManager();
+<Droppable id="zone-1" manager={manager}>Drop here!</Droppable>
+<Droppable id="zone-2" manager={manager}>Or here!</Droppable>
+```
+
+3. Use standalone (each instance creates its own manager):
+
+```tsx
+<Droppable id="zone-1">Drop here!</Droppable>
+```
+
+> Note: While standalone usage is possible, it's recommended to use `DragDropProvider` or pass a shared manager when working with multiple droppable elements for better performance and stability.
+
+#### Basic Usage
+
+```tsx
+import { Droppable } from "dnd-kit-solid";
+
+function App() {
+  return (
+    <Droppable id="drop-zone">
+      <div>Drop items here</div>
+    </Droppable>
+  );
+}
+```
+
+#### Using with Function Children
+
+You can use a function as children to access the droppable instance:
+
+```tsx
+function App() {
+  return (
+    <Droppable id="drop-zone">
+      {({ ref, isDropTarget }) => (
+        <div
+          ref={ref}
+          style={{ background: isDropTarget() ? "lightblue" : "white" }}
+        >
+          {isDropTarget() ? "Drop here!" : "Drop zone"}
+        </div>
+      )}
+    </Droppable>
+  );
+}
+```
+
+#### Custom Tag
+
+You can specify a custom HTML tag to render:
+
+```tsx
+function App() {
+  return (
+    <Droppable id="drop-zone" tag="section">
+      Drop items here
+    </Droppable>
+  );
+}
+```
+
+#### Props
+
+The `Droppable` component accepts all the same props as the `useDroppable` hook, plus:
+
+- `tag`: The HTML tag to render (defaults to 'div')
+- `children`: Either JSX elements or a function that receives the droppable instance
+
 ### useDraggable
 
 Use the `useDraggable` hook to make elements draggable that can be dropped over droppable targets.
@@ -205,6 +380,13 @@ The `useDraggable` hook accepts the following arguments:
 - `modifiers`: An array of modifiers that can be used to modify or restrict the behavior of the draggable element.
 - `sensors`: An array of sensors that can be bound to the draggable element to detect drag interactions.
 - `data`: Additional data about the draggable element that can be accessed in event handlers, modifiers, sensors or custom plugins.
+- Event handlers: All event handlers are passed to `useDragDropMonitor` and are filtered to only trigger for this specific draggable instance:
+  - `onBeforeDragStart`: Fires before drag begins (preventable)
+  - `onDragStart`: Fires when drag starts
+  - `onDragMove`: Fires during movement (preventable)
+  - `onDragOver`: Fires when over a droppable (preventable)
+  - `onCollision`: Fires on droppable collision (preventable)
+  - `onDragEnd`: Fires when drag ends
 
 ##### Output
 
@@ -303,6 +485,13 @@ The `useDroppable` hook accepts the following arguments:
 - `disabled`: Set to `true` to prevent the droppable element from being a drop target.
 - `data`: Additional data about the droppable element that can be accessed in event handlers, modifiers, sensors or custom plugins.
 - `effects`: Advanced feature for setting up reactive effects that are automatically cleaned up when the component is unmounted.
+- Event handlers: All event handlers are passed to `useDragDropMonitor` and are filtered to only trigger for this specific droppable instance:
+  - `onBeforeDragStart`: Fires before drag begins (preventable)
+  - `onDragStart`: Fires when drag starts
+  - `onDragMove`: Fires during movement (preventable)
+  - `onDragOver`: Fires when over a droppable (preventable)
+  - `onCollision`: Fires on droppable collision (preventable)
+  - `onDragEnd`: Fires when drag ends
 
 ##### Output
 

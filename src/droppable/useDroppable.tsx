@@ -1,29 +1,43 @@
 import { Droppable, type DroppableInput, DragDropManager } from '@dnd-kit/dom';
-import { createEffect, createSignal } from 'solid-js';
+import { createEffect, createSignal, splitProps } from 'solid-js';
 
+import { useDragDropMonitor, type UseDragDropMonitorProps } from '../context';
 import { useDragDropManager } from '../context/useDragDropManager';
+import { wrapSignal } from '../utils';
 
 import type { Data } from '@dnd-kit/abstract';
 
-export interface UseDroppableInput<T extends Data = Data> extends DroppableInput<T> {
+export interface UseDroppableInput<T extends Data = Data> extends DroppableInput<T>, Partial<UseDragDropMonitorProps<T>> {
   manager?: DragDropManager;
 }
 
 export function useDroppable<T extends Data = Data>(
-  input: UseDroppableInput<T>
+  props: UseDroppableInput<T>
 ) {
+  const [handlers, input] = splitProps(props, [
+    'onBeforeDragStart',
+    'onDragStart',
+    'onDragMove',
+    'onDragOver',
+    'onCollision',
+    'onDragEnd',
+  ]);
+
   const [elementRef, setElementRef] = createSignal<Element | undefined>(input.element);
 
-  const manager = input.manager ?? useDragDropManager() ?? new DragDropManager();
+  const manager = () => input.manager ?? useDragDropManager() ?? new DragDropManager();
   const droppable = new Droppable({
     ...input,
-  }, manager);
+  }, manager());
+
+  const isDropTarget = wrapSignal(() => droppable.isDropTarget);
 
   createEffect(() => {
     if (elementRef()) {
       droppable.element = elementRef();
     }
     
+    droppable.manager = manager();
     droppable.id = input.id;
     droppable.disabled = input.disabled ?? false;
     droppable.accept = input.accept;
@@ -40,9 +54,45 @@ export function useDroppable<T extends Data = Data>(
     }
   });
 
+  createEffect(() => {
+    useDragDropMonitor({
+      manager: manager(),
+      onBeforeDragStart: handlers.onBeforeDragStart ? (event, manager) => {
+        if (event.operation.target === droppable) {
+          return handlers.onBeforeDragStart!(event, manager);
+        }
+      } : undefined,
+      onDragStart: handlers.onDragStart ? (event, manager) => {
+        if (event.operation.target === droppable) {
+          handlers.onDragStart!(event, manager);
+        }
+      } : undefined,
+      onDragMove: handlers.onDragMove ? (event, manager) => {
+        if (event.operation.target === droppable) {
+          return handlers.onDragMove!(event, manager);
+        }
+      } : undefined,
+      onDragOver: handlers.onDragOver ? (event, manager) => {
+        if (event.operation.target === droppable) {
+          return handlers.onDragOver!(event, manager);
+        }
+      } : undefined,
+      onCollision: handlers.onCollision ? (event, manager) => {
+        if (event.collisions.length && droppable.isDropTarget) {
+          return handlers.onCollision!(event, manager);
+        }
+      } : undefined,
+      onDragEnd: handlers.onDragEnd ? (event, manager) => {
+        if (event.operation.target === droppable) {
+          handlers.onDragEnd!(event, manager);
+        }
+      } : undefined,
+    });
+  });
+
   return {
     droppable,
-    isDropTarget: () => droppable.isDropTarget,
+    isDropTarget,
     ref: setElementRef,
   };
 }

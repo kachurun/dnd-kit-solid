@@ -1,25 +1,26 @@
-import { createEffect, createUniqueId, mergeProps, splitProps, type JSX } from 'solid-js';
+import { createUniqueId, mergeProps, splitProps, type JSX } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 
 import { useDraggable, type UseDraggableInput } from './useDraggable';
 
 import type { WithAttributes } from '../utils/types';
+import type { Data } from '@dnd-kit/abstract';
 
-type CommonProps = Omit<UseDraggableInput, 'id'> & {
+type CommonProps<T extends Data = Data> = Omit<UseDraggableInput<T>, 'id'> & {
   id?: string;
-};
+} & UseDraggableInput<T>;
 
-type DraggablePropsAsFunction = CommonProps & {
+type DraggablePropsAsFunction<T extends Data = Data> = CommonProps<T> & {
   children: (draggable: ReturnType<typeof useDraggable>) => JSX.Element;
 };
 
-type DraggablePropsAsAttributes = WithAttributes<CommonProps> & {
+type DraggablePropsAsAttributes<T extends Data = Data> = WithAttributes<CommonProps<T>> & {
   tag?: string;
 };
 
-export type DraggableProps = DraggablePropsAsFunction | DraggablePropsAsAttributes;
+export type DraggableProps<T extends Data = Data> = DraggablePropsAsFunction<T> | DraggablePropsAsAttributes<T>;
 
-export function Draggable(props: DraggableProps) {
+export function Draggable<T extends Data = Data>(props: DraggableProps<T>) {
   const local = mergeProps({
     id: createUniqueId(),
   }, props);
@@ -35,22 +36,24 @@ export function Draggable(props: DraggableProps) {
     'modifiers',
     'sensors',
     'manager',
+    'onBeforeDragStart',
+    'onDragStart',
+    'onDragMove',
+    'onDragOver',
+    'onCollision',
+    'onDragEnd',
   ]);
 
-  const draggable = useDraggable(draggableProps);
-
-  createEffect(() => {
-    console.log(draggableProps);
-  });
-
+  const draggableObject = useDraggable(draggableProps);
+  
   return (<>
     {
       typeof props.children === 'function' ? (
-        props.children(draggable)
+        props.children(draggableObject)
       ) : (
         <Dynamic
           component={(props as DraggablePropsAsAttributes).tag || 'div'}
-          ref={draggable.ref}
+          ref={draggableObject.ref}
           {...attrs}
         >
           {props.children}

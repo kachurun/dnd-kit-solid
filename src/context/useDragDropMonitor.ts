@@ -1,23 +1,10 @@
-import { onMount, onCleanup } from 'solid-js';
+import { onCleanup, splitProps, createEffect } from 'solid-js';
 
 import { useDragDropManager } from './useDragDropManager.js';
 
 import type { DragDropEvents, Data } from '@dnd-kit/abstract';
 import type { Draggable, Droppable, DragDropManager } from '@dnd-kit/dom';
 import type { CleanupFunction } from '@dnd-kit/state';
-
-
-// Manual mapping of event names to handler names
-type DragDropEventMap = {
-  beforedragstart: 'onBeforeDragStart';
-};
-
-// Automatically generate the event handler name from the event name
-type EventHandlerName<T extends string> = T extends keyof DragDropEventMap
-  ? DragDropEventMap[T]
-  : T extends `drag${infer Second}${infer Rest}`
-    ? `onDrag${Uppercase<Second>}${Rest}`
-    : `on${Capitalize<T>}`;
 
 /**
  * Type for all possible event handlers
@@ -28,31 +15,53 @@ type Events<T extends Data> = DragDropEvents<
   DragDropManager<Draggable<T>, Droppable<T>>
 >;
 
-export type EventHandlers<T extends Data = Data> = {
-  [K in keyof Events<T> as EventHandlerName<K>]?: Events<T>[K];
-};
+export interface UseDragDropMonitorProps<T extends Data = Data> {
+  manager?: DragDropManager<Draggable<T>, Droppable<T>>;
+  
+  onBeforeDragStart?: Events<T>['beforedragstart'];
+  onCollision?: Events<T>['collision'];
+  onDragStart?: Events<T>['dragstart'];
+  onDragMove?: Events<T>['dragmove'];
+  onDragOver?: Events<T>['dragover'];
+  onDragEnd?: Events<T>['dragend'];
+}
 
 /**
  * Hook to monitor drag and drop events anywhere within a DragDropProvider
  * @param handlers Object containing event handlers for drag and drop events
+ * @returns A disposer function that can be called to cleanup event listeners
  */
 export function useDragDropMonitor<T extends Data = Data>(
-  handlers: EventHandlers<T>
-): void {
-  const manager = useDragDropManager();
+  props: UseDragDropMonitorProps<T>
+): () => void {
+  const [local, handlers] = splitProps(props, ['manager']);
+  const manager = () => local.manager ?? useDragDropManager();
 
-  onMount(() => {
-    if (!manager) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          'useDndMonitor hook was called outside of a DragDropProvider. ' +
+  if (!manager()) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        'useDndMonitor hook was called outside of a DragDropProvider. ' +
             'Make sure your app is wrapped in a DragDropProvider component.'
-        );
-      }
+      );
+    }
+    return () => {};
+  }
+
+  let cleanupFns: CleanupFunction[] = [];
+
+  const disposer = () => {
+    cleanupFns.forEach((cleanup) => cleanup?.());
+    cleanupFns = [];
+  };
+  
+  createEffect(() => {
+    const monitor = manager()?.monitor;
+
+    if (!monitor) {
       return;
     }
 
-    const cleanupFns = Object.entries(handlers).reduce<CleanupFunction[]>(
+    cleanupFns = Object.entries(handlers).reduce<CleanupFunction[]>(
       (acc, [handlerName, handler]) => {
         if (handler) {
           // Convert handler name (e.g. 'onDragStart') to event name (e.g. 'dragstart')
@@ -60,19 +69,21 @@ export function useDragDropMonitor<T extends Data = Data>(
             .replace(/^on/, '')
             .toLowerCase() as keyof Events<T>;
 
-          const unsubscribe = manager.monitor.addEventListener(
-            eventName,
-            handler
+          acc.push(
+            monitor.addEventListener(
+              eventName,
+              handler
+            )
           );
-
-          acc.push(unsubscribe);
         }
 
         return acc;
       },
       []
     );
-
-    onCleanup(() => cleanupFns.forEach((cleanup) => cleanup?.()));
+    
+    onCleanup(disposer);
   });
+
+  return disposer;
 }

@@ -1,98 +1,103 @@
-// import {createElement, useEffect, useMemo, useRef, type ReactNode} from 'react';
-// import {useComputed, useDeepSignal} from '@dnd-kit/react/hooks';
-// import {Draggable, Feedback} from '@dnd-kit/dom';
+import { Feedback } from '@dnd-kit/dom';
+import { createEffect, createMemo, onCleanup, Show , createSignal } from 'solid-js';
+import { Dynamic } from 'solid-js/web';
 
-// import {useDragDropManager} from '../hooks/useDragDropManager.ts';
-// import {DragDropContext} from '../context/context.ts';
+import { DragDropContext } from '../context/context';
+import { useDragDropManager } from '../context/useDragDropManager';
+import { wrapSignal } from '../utils/preactSignals';
 
-// export interface Props {
-//   className?: string;
-//   children: ReactNode | ((source: Draggable) => ReactNode);
-//   style?: React.CSSProperties;
-//   tag?: string;
-// }
+import type { Draggable, DragDropManager } from '@dnd-kit/dom';
+import type { JSX } from 'solid-js';
 
-// export function DragOverlay({children, className, style, tag}: Props) {
-//   const ref = useRef<HTMLDivElement | null>(null);
-//   const manager = useDragDropManager();
-//   const source = useComputed(
-//     () => manager?.dragOperation.source,
-//     [manager]
-//   ).value;
+function noop() {
+  return () => {};
+}
 
-//   useEffect(() => {
-//     if (!ref.current || !manager) return;
+/**
+ * Creates a patched version of the drag-drop manager that prevents
+ * draggable/droppable registration within the overlay.
+ * This ensures that elements inside the overlay don't interfere with
+ * the main drag-drop context.
+ */
+function usePatchedManager(manager: DragDropManager | null) {
+  const patchedManager = createMemo(() => {
+    if (!manager) return null;
 
-//     const feedback = manager.plugins.find(
-//       (plugin) => plugin instanceof Feedback
-//     );
+    // Create a proxy for the registry that prevents registration/unregistration
+    const patchedRegistry = new Proxy(manager.registry, {
+      get(target, property) {
+        if (property === 'register' || property === 'unregister') {
+          return noop;
+        }
+        return target[property as keyof typeof target];
+      },
+    });
 
-//     if (!feedback) return;
+    // Create a proxy for the manager that uses our patched registry
+    return new Proxy(manager, {
+      get(target, property) {
+        if (property === 'registry') {
+          return patchedRegistry;
+        }
+        return target[property as keyof typeof target];
+      },
+    });
+  });
+  
+  return patchedManager;
+}
 
-//     feedback.overlay = ref.current;
+export interface Props {
+  class?: string;
+  children: JSX.Element | ((source: Draggable) => JSX.Element);
+  style?: JSX.CSSProperties;
+  tag?: string;
+}
 
-//     return () => {
-//       feedback.overlay = undefined;
-//     };
-//   }, [manager]);
+export function DragOverlay(props: Props) {
+  const [element, setElement] = createSignal<HTMLDivElement>();
+  const manager = useDragDropManager();
+  const patchedManager = usePatchedManager(manager);
+  const source = wrapSignal(() => manager?.dragOperation?.source);
+  
+  createEffect(() => {
+    if (!source()) {
+      setElement(undefined);
+    }
+  });
+    
+  createEffect(() => {
+    const feedback = manager?.plugins.find(
+      (plugin): plugin is Feedback => plugin instanceof Feedback
+    );
 
-//   // Prevent children of the overlay from registering themselves as draggables or droppables
-//   const patchedManager = useMemo(() => {
-//     if (!manager) return null;
+    if (!feedback) return;
 
-//     const patchedRegistry = new Proxy(manager.registry, {
-//       get(target, property) {
-//         if (property === 'register' || property === 'unregister') {
-//           return noop;
-//         }
+    // TODO element not updating here
+    feedback.overlay = element();
 
-//         return target[property as keyof typeof target];
-//       },
-//     });
+    onCleanup(() => {
+      feedback.overlay = undefined;
+    });
+  });
 
-//     return new Proxy(manager, {
-//       get(target, property) {
-//         if (property === 'registry') {
-//           return patchedRegistry;
-//         }
-
-//         return target[property as keyof typeof target];
-//       },
-//     });
-//   }, [manager]);
-
-//   return (
-//     <DragDropContext.Provider value={patchedManager}>
-//       {createElement(
-//         tag || 'div',
-//         {ref, className, style, 'data-dnd-overlay': true},
-
-//         renderChildren()
-//       )}
-//     </DragDropContext.Provider>
-//   );
-
-//   function renderChildren() {
-//     if (!source) return null;
-
-//     if (typeof children === 'function') {
-//       return <Children source={source}>{children}</Children>;
-//     }
-
-//     return children;
-//   }
-// }
-
-// function noop() {
-//   return () => {};
-// }
-
-// function Children({
-//   children,
-//   source,
-// }: {
-//   children: (source: Draggable) => ReactNode;
-//   source: Draggable;
-// }) {
-//   return children(useDeepSignal(source));
-// }
+  return (
+    <DragDropContext.Provider value={patchedManager()}> 
+      <Show when={source()}>
+        {(source) => (
+          <Dynamic
+            component={props.tag || 'div'}
+            ref={setElement}
+            class={props.class}
+            style={props.style}
+            data-dnd-overlay
+          >
+            {typeof props.children === 'function' 
+              ? (props.children as (source: Draggable) => JSX.Element)(source())
+              : props.children}
+          </Dynamic>
+        )}
+      </Show>
+    </DragDropContext.Provider>
+  );
+}

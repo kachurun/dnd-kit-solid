@@ -3,16 +3,10 @@
   "version": "0.1.0",
   "description": "The modern, lightweight, headless sortable library",
   "type": "module",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/index.d.ts"
-    }
-  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -60,5 +54,42 @@
     "@dnd-kit/dom": "^0.0.10",
     "babel-preset-solid": "^1.9.5",
     "solid-js": "^1.9.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./draggable": {
+      "types": "./dist/types/draggable/index.d.ts",
+      "import": "./dist/esm/draggable/index.js",
+      "require": "./dist/cjs/draggable/index.js"
+    },
+    "./droppable": {
+      "types": "./dist/types/droppable/index.d.ts",
+      "import": "./dist/esm/droppable/index.js",
+      "require": "./dist/cjs/droppable/index.js"
+    },
+    "./sortable": {
+      "types": "./dist/types/sortable/index.d.ts",
+      "import": "./dist/esm/sortable/index.js",
+      "require": "./dist/cjs/sortable/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/types/hooks/index.d.ts",
+      "import": "./dist/esm/hooks/index.js",
+      "require": "./dist/cjs/hooks/index.js"
+    },
+    "./utils": {
+      "types": "./dist/types/utils/index.d.ts",
+      "import": "./dist/esm/utils/index.js",
+      "require": "./dist/cjs/utils/index.js"
+    },
+    "./context": {
+      "types": "./dist/types/context/index.d.ts",
+      "import": "./dist/esm/context/index.js",
+      "require": "./dist/cjs/context/index.js"
+    }
   }
 }

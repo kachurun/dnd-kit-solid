@@ -36,7 +36,7 @@ export function DragDropProvider(props: Props) {
   const manager = createMemo(() => local.manager ?? new DragDropManager(input));
   
   createEffect(() => {
-    manager().renderer = renderer();
+    manager().renderer = renderer;
     
     manager().monitor.addEventListener('beforedragstart', (event, manager) => {
       const callback = local.onBeforeDragStart;

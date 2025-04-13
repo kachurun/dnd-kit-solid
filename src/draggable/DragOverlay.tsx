@@ -13,16 +13,14 @@ function noop() {
   return () => {};
 }
 
-
-export interface Props {
+export interface DragOverlayProps {
   class?: string;
   children: JSX.Element | ((source: Draggable) => JSX.Element);
   style?: JSX.CSSProperties;
   tag?: ValidComponent;
 }
 
-
-export function DragOverlay(props: Props) {
+export function DragOverlay(props: DragOverlayProps) {
   const [element, setElement] = createSignal<HTMLDivElement>();
   const manager = useDragDropManager();
   const patchedManager = usePatchedManager(manager);

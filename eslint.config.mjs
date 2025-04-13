@@ -123,33 +123,7 @@ export default [
         checksVoidReturn: false,
       }],
       '@typescript-eslint/no-redundant-type-constituents': 'off',
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: ['classMethod', 'typeLike'],
-          format: ['PascalCase'],
-        },
-        {
-          selector: 'variableLike',
-          format: ['camelCase', 'UPPER_CASE'],
-          filter: {
-            regex: '^[A-Z]',
-            match: false,
-          },
-        },
-        {
-          selector: 'variableLike',
-          format: ['PascalCase'],
-          filter: {
-            regex: '^[A-Z]',
-            match: true,
-          },
-        },
-        {
-          selector: 'property',
-          format: ['camelCase'],
-        }
-      ],
+      '@typescript-eslint/naming-convention': "off",
 
       // Stylistic rules
       '@stylistic/ts/indent': ['error', 2],

@@ -10,7 +10,7 @@ import type { ParentProps } from 'solid-js';
 
 type Events = DragDropEvents<Draggable, Droppable, DragDropManager>;
 
-export interface Props extends DragDropManagerInput, ParentProps {
+export interface DragDropProviderProps extends DragDropManagerInput, ParentProps {
   manager?: DragDropManager;
   onBeforeDragStart?: Events['beforedragstart'];
   onCollision?: Events['collision'];
@@ -20,7 +20,7 @@ export interface Props extends DragDropManagerInput, ParentProps {
   onDragEnd?: Events['dragend'];
 }
 
-export function DragDropProvider(props: Props) {
+export function DragDropProvider(props: DragDropProviderProps) {
   const [local, input] = splitProps(props, [
     'children',
     'manager',

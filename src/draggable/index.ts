@@ -1,2 +1,3 @@
-export * from './DragOverlay';
 export * from './useDraggable';
+export * from './Draggable';
+export * from './DragOverlay';

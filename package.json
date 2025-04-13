@@ -18,7 +18,6 @@
     "build:lib": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "dev": "vite playground",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

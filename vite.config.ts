@@ -2,15 +2,30 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import solid from 'vite-plugin-solid';
 
-const entries = {
-  index: resolve(__dirname, 'src/index.ts'),
-  'draggable/index': resolve(__dirname, 'src/draggable/index.ts'),
-  'droppable/index': resolve(__dirname, 'src/droppable/index.ts'),
-  'sortable/index': resolve(__dirname, 'src/sortable/index.ts'),
-  'hooks/index': resolve(__dirname, 'src/hooks/index.ts'),
-  'utils/index': resolve(__dirname, 'src/utils/index.ts'),
-  'context/index': resolve(__dirname, 'src/context/index.ts'),
+import pkg from './package.json';
+
+type ExportEntry = {
+  types: string;
+  import: string;
+  require: string;
 };
+
+function getLibEntriesFromExports(exportsMap: Record<string, ExportEntry>) {
+  const entries: Record<string, string> = {};
+
+  for (const key in exportsMap) {
+    if (key === '.') {
+      entries['index'] = resolve(__dirname, 'src/index.ts');
+    } else {
+      const entryPath = key.replace(/^\.\//, '');
+      entries[entryPath] = resolve(__dirname, `src/${entryPath}/index.ts`);
+    }
+  }
+
+  return entries;
+}
+
+const entries = getLibEntriesFromExports(pkg.exports);
 
 export default defineConfig({
   plugins: [solid()],

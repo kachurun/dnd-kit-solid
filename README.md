@@ -4,7 +4,14 @@
   <img src="assets/logo.svg" alt="dnd-kit-solid logo" width="100%" />
 </p>
 
-Bringing the power of [dnd-kit](https://github.com/clauderic/dnd-kit) to [SolidJS](https://www.solidjs.com/) applications. A modern, lightweight, performant, accessible and extensible drag & drop toolkit with the same great API and features.
+Bringing the power of [dnd-kit](https://next.dndkit.com) to the [SolidJS](https://www.solidjs.com/).
+
+## Key Features
+
+- **Solid ready**: First-class support for SolidJS
+- **Batteries included**: Drag, drop, sort, and reorder in any layout or direction
+- **Fully extensible**: Plugins, sensors, and modifiers for complete control
+- **Production ready**: Built for performance, accessibility, and reliability
 
 ## Install
 
@@ -577,16 +584,6 @@ The `useDragOperation` hook returns a reactive store containing:
 npm install
 ```
 
-### Development Mode
-
-Start the development server with the playground:
-
-```bash
-npm run dev
-```
-
-This will start a development server at http://localhost:3000 where you can see your changes in real-time.
-
 ### Building
 
 Build the library for production:
@@ -600,19 +597,6 @@ This generates:
 - CommonJS build in `dist/cjs/`
 - ES Modules build in `dist/esm/`
 - TypeScript type definitions in `dist/types/`
-
-### Testing
-
-```bash
-# Run tests
-npm test
-
-# Check code quality
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-```
 
 ## Contributing
 

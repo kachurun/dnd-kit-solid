@@ -9,7 +9,7 @@ Bringing the power of [dnd-kit](https://github.com/clauderic/dnd-kit) to [SolidJ
 ## Install
 
 ```bash
-npm i dnd-kit-solid
+npm i dnd-kit-solid @dnd-kit/dom
 ```
 
 ## Usage

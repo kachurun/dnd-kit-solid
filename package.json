@@ -1,7 +1,7 @@
 {
   "name": "dnd-kit-solid",
   "version": "0.1.0",
-  "description": "The modern, lightweight, headless dnd-kit-solidble library",
+  "description": "Bringing the power of dnd-kit to SolidJS applications. A modern, lightweight, performant, accessible and extensible drag & drop toolkit.",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -22,7 +22,7 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "dnd-kit-solidble",
+    "sortable",
     "drag",
     "drop",
     "list",
@@ -30,7 +30,6 @@
     "animation",
     "solidjs",
     "dnd-kit",
-    "sortable",
     "draggable"
   ],
   "author": "",
@@ -74,37 +73,37 @@
     ".": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.cjs"
     },
     "./draggable": {
       "types": "./dist/types/draggable/index.d.ts",
       "import": "./dist/esm/draggable/index.js",
-      "require": "./dist/cjs/draggable/index.js"
+      "require": "./dist/cjs/draggable/index.cjs"
     },
     "./droppable": {
       "types": "./dist/types/droppable/index.d.ts",
       "import": "./dist/esm/droppable/index.js",
-      "require": "./dist/cjs/droppable/index.js"
+      "require": "./dist/cjs/droppable/index.cjs"
     },
-    "./dnd-kit-solidble": {
-      "types": "./dist/types/dnd-kit-solidble/index.d.ts",
-      "import": "./dist/esm/dnd-kit-solidble/index.js",
-      "require": "./dist/cjs/dnd-kit-solidble/index.js"
+    "./sortable": {
+      "types": "./dist/types/sortable/index.d.ts",
+      "import": "./dist/esm/sortable/index.js",
+      "require": "./dist/cjs/sortable/index.cjs"
     },
     "./hooks": {
       "types": "./dist/types/hooks/index.d.ts",
       "import": "./dist/esm/hooks/index.js",
-      "require": "./dist/cjs/hooks/index.js"
+      "require": "./dist/cjs/hooks/index.cjs"
     },
     "./utils": {
       "types": "./dist/types/utils/index.d.ts",
       "import": "./dist/esm/utils/index.js",
-      "require": "./dist/cjs/utils/index.js"
+      "require": "./dist/cjs/utils/index.cjs"
     },
     "./context": {
       "types": "./dist/types/context/index.d.ts",
       "import": "./dist/esm/context/index.js",
-      "require": "./dist/cjs/context/index.js"
+      "require": "./dist/cjs/context/index.cjs"
     }
   }
 }

@@ -3,7 +3,7 @@ import { Dynamic } from 'solid-js/web';
 
 import { useDraggable, type UseDraggableInput } from './useDraggable';
 
-import type { WithAttributes } from '../utils/types';
+import type { WithAttributes } from '../utilities/types';
 import type { Data } from '@dnd-kit/abstract';
 
 type CommonProps<T extends Data = Data> = Omit<UseDraggableInput<T>, 'id'> & {

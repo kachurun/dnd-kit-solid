@@ -1,7 +1,7 @@
 import { createComputed, onCleanup } from 'solid-js';
 
 import { useDragDropManager } from '../context/useDragDropManager';
-import { wrapStore, type ProxiedStore } from '../utils/preactSignals';
+import { wrapStore, type ProxiedStore } from '../utilities/preactSignals';
 
 import type { DragDropManager } from '@dnd-kit/dom';
 

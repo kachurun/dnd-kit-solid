@@ -95,10 +95,10 @@
             "import": "./dist/esm/hooks/index.js",
             "require": "./dist/cjs/hooks/index.cjs"
         },
-        "./utils": {
-            "types": "./dist/types/utils/index.d.ts",
-            "import": "./dist/esm/utils/index.js",
-            "require": "./dist/cjs/utils/index.cjs"
+        "./utilities": {
+            "types": "./dist/types/utilities/index.d.ts",
+            "import": "./dist/esm/utilities/index.js",
+            "require": "./dist/cjs/utilities/index.cjs"
         },
         "./context": {
             "types": "./dist/types/context/index.d.ts",

@@ -3,7 +3,7 @@ import { Dynamic } from 'solid-js/web';
 
 import { useDroppable, type UseDroppableInput } from './useDroppable';
 
-import type { WithAttributes } from '../utils/types';
+import type { WithAttributes } from '../utilities/types';
 import type { Data } from '@dnd-kit/abstract';
 
 type CommonProps<T extends Data = Data> = Omit<UseDroppableInput<T>, 'id'> & {

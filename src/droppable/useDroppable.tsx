@@ -3,7 +3,7 @@ import { createEffect, createMemo, createSignal, splitProps } from 'solid-js';
 
 import { useDragDropMonitor, type UseDragDropMonitorProps } from '../context';
 import { useDragDropManager } from '../context/useDragDropManager';
-import { wrapSignal } from '../utils';
+import { wrapSignal } from '../utilities';
 
 import type { Data } from '@dnd-kit/abstract';
 

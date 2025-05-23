@@ -1,5 +1,5 @@
 import { Feedback } from '@dnd-kit/dom';
-import { createEffect, createMemo, onCleanup, Show , createSignal } from 'solid-js';
+import { createEffect, createMemo, onCleanup, Show, createSignal } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 
 import { DragDropContext } from '../context/context';
@@ -25,16 +25,16 @@ export function DragOverlay(props: DragOverlayProps) {
   const manager = useDragDropManager();
   const patchedManager = usePatchedManager(manager);
   const dragOperation = useDragOperation();
-  
+
   createEffect(() => {
     if (!dragOperation.source) {
       setElement(undefined);
     }
   });
-    
+
   createEffect(() => {
     const feedback = manager?.plugins.find(
-      (plugin): plugin is Feedback => plugin instanceof Feedback
+      (plugin): plugin is Feedback => plugin instanceof Feedback,
     );
 
     if (!feedback) return;
@@ -47,7 +47,7 @@ export function DragOverlay(props: DragOverlayProps) {
   });
 
   return (
-    <DragDropContext.Provider value={patchedManager()}> 
+    <DragDropContext.Provider value={patchedManager()}>
       <Show when={dragOperation.source}>
         { (source: Accessor<Draggable>) => (
           <Dynamic
@@ -58,7 +58,7 @@ export function DragOverlay(props: DragOverlayProps) {
             ref={setElement}
           >
             {
-              typeof props.children === 'function' 
+              typeof props.children === 'function'
                 ? props.children(source())
                 : props.children
             }
@@ -99,6 +99,6 @@ function usePatchedManager(manager: DragDropManager | null) {
       },
     });
   });
-  
+
   return patchedManager;
 }

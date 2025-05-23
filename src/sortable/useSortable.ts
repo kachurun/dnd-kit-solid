@@ -11,8 +11,14 @@ export interface UseSortableInput<T extends Data = Data> extends Omit<SortableIn
   source?: Element;
 }
 
+const DEFAULT_TRANSITION = {
+  duration: 250, // Animation duration in ms
+  easing: 'cubic-bezier(0.25, 1, 0.5, 1)', // Animation easing
+  idle: false, // Whether to animate when no drag is in progress
+};
+
 export function useSortable<T extends Data = Data>(
-  input: UseSortableInput<T>
+  input: UseSortableInput<T>,
 ) {
   const [elementRef, setElementRef] = createSignal<Element | undefined>(input.element);
   const [handleRef, setHandleRef] = createSignal<Element | undefined>(input.handle);
@@ -22,14 +28,14 @@ export function useSortable<T extends Data = Data>(
   const manager = input.manager ?? useDragDropManager() ?? new DragDropManager();
   const sortable = new Sortable({
     ...input,
-    transition: input.transition ?? null,
+    transition: input.transition ?? DEFAULT_TRANSITION,
   }, manager);
 
   createEffect(() => {
     if (handleRef()) {
       sortable.handle = handleRef();
     }
-    
+
     if (elementRef()) {
       sortable.element = elementRef();
     }
@@ -41,7 +47,7 @@ export function useSortable<T extends Data = Data>(
     if (sourceRef()) {
       sortable.source = sourceRef();
     }
-    
+
     sortable.id = input.id;
     sortable.disabled = input.disabled ?? false;
     sortable.feedback = input.feedback ?? 'default';
@@ -53,12 +59,12 @@ export function useSortable<T extends Data = Data>(
     sortable.group = input.group;
     sortable.index = input.index;
     sortable.collisionPriority = input.collisionPriority;
-    sortable.transition = input.transition ?? null;
-    
+    sortable.transition = input.transition ?? DEFAULT_TRANSITION;
+
     if (input.collisionDetector) {
       sortable.collisionDetector = input.collisionDetector;
     }
-    
+
     if (input.data) {
       sortable.data = input.data;
     }
@@ -70,7 +76,7 @@ export function useSortable<T extends Data = Data>(
     isDropping: () => sortable.isDropping,
     isDragSource: () => sortable.isDragSource,
     isDropTarget: () => sortable.isDropTarget,
-    
+
     ref: setElementRef,
     targetRef: setTargetRef,
     sourceRef: setSourceRef,

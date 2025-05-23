@@ -1,4 +1,4 @@
-import { onCleanup, splitProps, createEffect } from 'solid-js';
+import { onCleanup, splitProps, createEffect, createMemo } from 'solid-js';
 
 import { useDragDropManager } from './useDragDropManager.js';
 
@@ -17,7 +17,7 @@ type Events<T extends Data> = DragDropEvents<
 
 export interface UseDragDropMonitorProps<T extends Data = Data> {
   manager?: DragDropManager<Draggable<T>, Droppable<T>>;
-  
+
   onBeforeDragStart?: Events<T>['beforedragstart'];
   onCollision?: Events<T>['collision'];
   onDragStart?: Events<T>['dragstart'];
@@ -32,18 +32,17 @@ export interface UseDragDropMonitorProps<T extends Data = Data> {
  * @returns A disposer function that can be called to cleanup event listeners
  */
 export function useDragDropMonitor<T extends Data = Data>(
-  props: UseDragDropMonitorProps<T>
+  props: UseDragDropMonitorProps<T>,
 ): () => void {
   const [local, handlers] = splitProps(props, ['manager']);
-  const manager = () => local.manager ?? useDragDropManager();
+  const manager = createMemo(() => local.manager ?? useDragDropManager());
 
   if (!manager()) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        'useDndMonitor hook was called outside of a DragDropProvider. ' +
-            'Make sure your app is wrapped in a DragDropProvider component.'
-      );
-    }
+    console.warn(
+      'useDndMonitor hook was called outside of a DragDropProvider. '
+      + 'Make sure your app is wrapped in a DragDropProvider component.',
+    );
+
     return () => {};
   }
 
@@ -53,7 +52,7 @@ export function useDragDropMonitor<T extends Data = Data>(
     cleanupFns.forEach((cleanup) => cleanup?.());
     cleanupFns = [];
   };
-  
+
   createEffect(() => {
     const monitor = manager()?.monitor;
 
@@ -72,16 +71,16 @@ export function useDragDropMonitor<T extends Data = Data>(
           acc.push(
             monitor.addEventListener(
               eventName,
-              handler
-            )
+              handler,
+            ),
           );
         }
 
         return acc;
       },
-      []
+      [],
     );
-    
+
     onCleanup(disposer);
   });
 

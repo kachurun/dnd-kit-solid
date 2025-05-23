@@ -1,5 +1,5 @@
 import { Droppable, type DroppableInput, DragDropManager } from '@dnd-kit/dom';
-import { createEffect, createSignal, splitProps } from 'solid-js';
+import { createEffect, createMemo, createSignal, splitProps } from 'solid-js';
 
 import { useDragDropMonitor, type UseDragDropMonitorProps } from '../context';
 import { useDragDropManager } from '../context/useDragDropManager';
@@ -12,7 +12,7 @@ export interface UseDroppableInput<T extends Data = Data> extends DroppableInput
 }
 
 export function useDroppable<T extends Data = Data>(
-  props: UseDroppableInput<T>
+  props: UseDroppableInput<T>,
 ) {
   const [handlers, input] = splitProps(props, [
     'onBeforeDragStart',
@@ -25,7 +25,8 @@ export function useDroppable<T extends Data = Data>(
 
   const [elementRef, setElementRef] = createSignal<Element | undefined>(input.element);
 
-  const manager = () => input.manager ?? useDragDropManager() ?? new DragDropManager();
+  const manager = createMemo(() => input.manager ?? useDragDropManager() ?? new DragDropManager());
+
   const droppable = new Droppable({
     ...input,
   }, manager());
@@ -36,7 +37,7 @@ export function useDroppable<T extends Data = Data>(
     if (elementRef()) {
       droppable.element = elementRef();
     }
-    
+
     droppable.manager = manager();
     droppable.id = input.id;
     droppable.disabled = input.disabled ?? false;
@@ -44,11 +45,11 @@ export function useDroppable<T extends Data = Data>(
     droppable.type = input.type;
 
     droppable.collisionPriority = input.collisionPriority;
-    
+
     if (input.collisionDetector) {
       droppable.collisionDetector = input.collisionDetector;
     }
-    
+
     if (input.data) {
       droppable.data = input.data;
     }
@@ -57,36 +58,48 @@ export function useDroppable<T extends Data = Data>(
   createEffect(() => {
     useDragDropMonitor({
       manager: manager(),
-      onBeforeDragStart: handlers.onBeforeDragStart ? (event, manager) => {
-        if (event.operation.target === droppable) {
-          return handlers.onBeforeDragStart!(event, manager);
-        }
-      } : undefined,
-      onDragStart: handlers.onDragStart ? (event, manager) => {
-        if (event.operation.target === droppable) {
-          handlers.onDragStart!(event, manager);
-        }
-      } : undefined,
-      onDragMove: handlers.onDragMove ? (event, manager) => {
-        if (event.operation.target === droppable) {
-          return handlers.onDragMove!(event, manager);
-        }
-      } : undefined,
-      onDragOver: handlers.onDragOver ? (event, manager) => {
-        if (event.operation.target === droppable) {
-          return handlers.onDragOver!(event, manager);
-        }
-      } : undefined,
-      onCollision: handlers.onCollision ? (event, manager) => {
-        if (event.collisions.length && droppable.isDropTarget) {
-          return handlers.onCollision!(event, manager);
-        }
-      } : undefined,
-      onDragEnd: handlers.onDragEnd ? (event, manager) => {
-        if (event.operation.target === droppable) {
-          handlers.onDragEnd!(event, manager);
-        }
-      } : undefined,
+      onBeforeDragStart: handlers.onBeforeDragStart
+        ? (event, manager) => {
+            if (event.operation.target === droppable) {
+              return handlers.onBeforeDragStart!(event, manager);
+            }
+          }
+        : undefined,
+      onDragStart: handlers.onDragStart
+        ? (event, manager) => {
+            if (event.operation.target === droppable) {
+              handlers.onDragStart!(event, manager);
+            }
+          }
+        : undefined,
+      onDragMove: handlers.onDragMove
+        ? (event, manager) => {
+            if (event.operation.target === droppable) {
+              return handlers.onDragMove!(event, manager);
+            }
+          }
+        : undefined,
+      onDragOver: handlers.onDragOver
+        ? (event, manager) => {
+            if (event.operation.target === droppable) {
+              return handlers.onDragOver!(event, manager);
+            }
+          }
+        : undefined,
+      onCollision: handlers.onCollision
+        ? (event, manager) => {
+            if (event.collisions.length && droppable.isDropTarget) {
+              return handlers.onCollision!(event, manager);
+            }
+          }
+        : undefined,
+      onDragEnd: handlers.onDragEnd
+        ? (event, manager) => {
+            if (event.operation.target === droppable) {
+              handlers.onDragEnd!(event, manager);
+            }
+          }
+        : undefined,
     });
   });
 

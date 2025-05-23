@@ -45,20 +45,24 @@ export function Draggable<T extends Data = Data>(props: DraggableProps<T>) {
   ]);
 
   const draggableObject = useDraggable(draggableProps);
-  
-  return (<>
-    {
-      typeof props.children === 'function' ? (
-        props.children(draggableObject)
-      ) : (
-        <Dynamic
-          component={(props as DraggablePropsAsAttributes).tag || 'div'}
-          ref={draggableObject.ref}
-          {...attrs}
-        >
-          {props.children}
-        </Dynamic>
-      )
-    }
-  </>);
+
+  return (
+    <>
+      {
+        typeof props.children === 'function'
+          ? (
+              props.children(draggableObject)
+            )
+          : (
+              <Dynamic
+                component={(props as DraggablePropsAsAttributes).tag || 'div'}
+                ref={draggableObject.ref}
+                {...attrs}
+              >
+                {props.children}
+              </Dynamic>
+            )
+      }
+    </>
+  );
 }

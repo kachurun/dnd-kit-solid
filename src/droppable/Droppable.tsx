@@ -43,20 +43,24 @@ export function Droppable<T extends Data = Data>(props: DroppableProps<T>) {
   ]);
 
   const droppableObject = useDroppable(droppableProps);
-  
-  return (<>
-    {
-      typeof props.children === 'function' ? (
-        props.children(droppableObject)
-      ) : (
-        <Dynamic
-          component={(props as DroppablePropsAsAttributes).tag || 'div'}
-          ref={droppableObject.ref}
-          {...attrs}
-        >
-          {props.children}
-        </Dynamic>
-      )
-    }
-  </>);
-} 
+
+  return (
+    <>
+      {
+        typeof props.children === 'function'
+          ? (
+              props.children(droppableObject)
+            )
+          : (
+              <Dynamic
+                component={(props as DroppablePropsAsAttributes).tag || 'div'}
+                ref={droppableObject.ref}
+                {...attrs}
+              >
+                {props.children}
+              </Dynamic>
+            )
+      }
+    </>
+  );
+}

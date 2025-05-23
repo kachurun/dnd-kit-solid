@@ -1,108 +1,109 @@
 {
-  "name": "dnd-kit-solid",
-  "version": "0.1.0",
-  "description": "Bringing the power of dnd-kit to SolidJS applications. A modern, lightweight, performant, accessible and extensible drag & drop toolkit.",
-  "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "npm run clean && npm run build:types && npm run build:lib",
-    "build:types": "tsc -p tsconfig.types.json",
-    "build:lib": "vite build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": [
-    "sortable",
-    "drag",
-    "drop",
-    "list",
-    "reorder",
-    "animation",
-    "solidjs",
-    "dnd-kit",
-    "draggable"
-  ],
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kachurun/dnd-kit-solid.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kachurun/dnd-kit-solid/issues"
-  },
-  "homepage": "https://github.com/kachurun/dnd-kit-solid#readme",
-  "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-typescript": "^7.27.0",
-    "@dnd-kit/dom": "^0.0.10",
-    "@eslint/js": "^9.24.0",
-    "@stylistic/eslint-plugin-ts": "^4.2.0",
-    "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^8.29.1",
-    "@typescript-eslint/parser": "^8.29.1",
-    "babel-preset-solid": "^1.9.5",
-    "eslint": "^9.24.0",
-    "eslint-import-resolver-typescript": "^4.3.2",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-solid": "^0.14.5",
-    "eslint-plugin-unused-imports": "^4.1.4",
-    "jest": "^29.7.0",
-    "solid-js": "^1.9.5",
-    "ts-jest": "^29.3.1",
-    "typescript": "^5.8.3",
-    "vite": "^6.2.5",
-    "vite-plugin-solid": "^2.11.6"
-  },
-  "peerDependencies": {
-    "@dnd-kit/dom": "^0.0.10",
-    "solid-js": "^1.9.5"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs"
+    "name": "dnd-kit-solid",
+    "version": "0.1.0",
+    "description": "Bringing the power of dnd-kit to SolidJS applications. A modern, lightweight, performant, accessible and extensible drag & drop toolkit.",
+    "type": "module",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/types/index.d.ts",
+    "sideEffects": false,
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "npm run clean && npm run build:types && npm run build:lib",
+        "build:types": "tsc -p tsconfig.types.json",
+        "build:lib": "vite build",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "prepublishOnly": "npm run build"
     },
-    "./draggable": {
-      "types": "./dist/types/draggable/index.d.ts",
-      "import": "./dist/esm/draggable/index.js",
-      "require": "./dist/cjs/draggable/index.cjs"
+    "keywords": [
+        "sortable",
+        "drag",
+        "drop",
+        "list",
+        "reorder",
+        "animation",
+        "solidjs",
+        "dnd-kit",
+        "draggable"
+    ],
+    "author": "",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kachurun/dnd-kit-solid.git"
     },
-    "./droppable": {
-      "types": "./dist/types/droppable/index.d.ts",
-      "import": "./dist/esm/droppable/index.js",
-      "require": "./dist/cjs/droppable/index.cjs"
+    "bugs": {
+        "url": "https://github.com/kachurun/dnd-kit-solid/issues"
     },
-    "./sortable": {
-      "types": "./dist/types/sortable/index.d.ts",
-      "import": "./dist/esm/sortable/index.js",
-      "require": "./dist/cjs/sortable/index.cjs"
+    "homepage": "https://github.com/kachurun/dnd-kit-solid#readme",
+    "devDependencies": {
+        "@babel/core": "^7.26.10",
+        "@babel/preset-env": "^7.26.9",
+        "@babel/preset-typescript": "^7.27.0",
+        "@dnd-kit/dom": "^0.0.10",
+        "@eslint/js": "^9.24.0",
+        "@flexbe/eslint-config": "^1.0.9",
+        "@stylistic/eslint-plugin-ts": "^4.2.0",
+        "@types/jest": "^29.5.14",
+        "@typescript-eslint/eslint-plugin": "^8.29.1",
+        "@typescript-eslint/parser": "^8.29.1",
+        "babel-preset-solid": "^1.9.5",
+        "eslint": "^9.24.0",
+        "eslint-import-resolver-typescript": "^4.3.2",
+        "eslint-plugin-import": "^2.31.0",
+        "eslint-plugin-solid": "^0.14.5",
+        "eslint-plugin-unused-imports": "^4.1.4",
+        "jest": "^29.7.0",
+        "solid-js": "^1.9.5",
+        "ts-jest": "^29.3.1",
+        "typescript": "^5.8.3",
+        "vite": "^6.2.5",
+        "vite-plugin-solid": "^2.11.6"
     },
-    "./hooks": {
-      "types": "./dist/types/hooks/index.d.ts",
-      "import": "./dist/esm/hooks/index.js",
-      "require": "./dist/cjs/hooks/index.cjs"
+    "peerDependencies": {
+        "@dnd-kit/dom": "^0.0.10",
+        "solid-js": "^1.9.5"
     },
-    "./utils": {
-      "types": "./dist/types/utils/index.d.ts",
-      "import": "./dist/esm/utils/index.js",
-      "require": "./dist/cjs/utils/index.cjs"
-    },
-    "./context": {
-      "types": "./dist/types/context/index.d.ts",
-      "import": "./dist/esm/context/index.js",
-      "require": "./dist/cjs/context/index.cjs"
+    "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.cjs"
+        },
+        "./draggable": {
+            "types": "./dist/types/draggable/index.d.ts",
+            "import": "./dist/esm/draggable/index.js",
+            "require": "./dist/cjs/draggable/index.cjs"
+        },
+        "./droppable": {
+            "types": "./dist/types/droppable/index.d.ts",
+            "import": "./dist/esm/droppable/index.js",
+            "require": "./dist/cjs/droppable/index.cjs"
+        },
+        "./sortable": {
+            "types": "./dist/types/sortable/index.d.ts",
+            "import": "./dist/esm/sortable/index.js",
+            "require": "./dist/cjs/sortable/index.cjs"
+        },
+        "./hooks": {
+            "types": "./dist/types/hooks/index.d.ts",
+            "import": "./dist/esm/hooks/index.js",
+            "require": "./dist/cjs/hooks/index.cjs"
+        },
+        "./utils": {
+            "types": "./dist/types/utils/index.d.ts",
+            "import": "./dist/esm/utils/index.js",
+            "require": "./dist/cjs/utils/index.cjs"
+        },
+        "./context": {
+            "types": "./dist/types/context/index.d.ts",
+            "import": "./dist/esm/context/index.js",
+            "require": "./dist/cjs/context/index.cjs"
+        }
     }
-  }
 }

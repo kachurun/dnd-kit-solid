@@ -16,7 +16,8 @@ function getLibEntriesFromExports(exportsMap: Record<string, ExportEntry>) {
   for (const key in exportsMap) {
     if (key === '.') {
       entries['index'] = resolve(__dirname, 'src/index.ts');
-    } else {
+    }
+    else {
       const entryPath = key.replace(/^\.\//, '');
       entries[entryPath] = resolve(__dirname, `src/${entryPath}/index.ts`);
     }
@@ -61,4 +62,4 @@ export default defineConfig({
       ],
     },
   },
-}); 
+});

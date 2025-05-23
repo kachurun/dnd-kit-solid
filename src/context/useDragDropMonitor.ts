@@ -1,29 +1,29 @@
-import { onCleanup, splitProps, createEffect, createMemo } from 'solid-js';
+import { createEffect, createMemo, onCleanup, splitProps } from 'solid-js';
 
 import { useDragDropManager } from './useDragDropManager.js';
 
-import type { DragDropEvents, Data } from '@dnd-kit/abstract';
-import type { Draggable, Droppable, DragDropManager } from '@dnd-kit/dom';
+import type { Data, DragDropEvents } from '@dnd-kit/abstract';
+import type { DragDropManager, Draggable, Droppable } from '@dnd-kit/dom';
 import type { CleanupFunction } from '@dnd-kit/state';
 
 /**
  * Type for all possible event handlers
  */
 type Events<T extends Data> = DragDropEvents<
-  Draggable<T>,
-  Droppable<T>,
-  DragDropManager<Draggable<T>, Droppable<T>>
+    Draggable<T>,
+    Droppable<T>,
+    DragDropManager<Draggable<T>, Droppable<T>>
 >;
 
 export interface UseDragDropMonitorProps<T extends Data = Data> {
-  manager?: DragDropManager<Draggable<T>, Droppable<T>>;
+    manager?: DragDropManager<Draggable<T>, Droppable<T>>;
 
-  onBeforeDragStart?: Events<T>['beforedragstart'];
-  onCollision?: Events<T>['collision'];
-  onDragStart?: Events<T>['dragstart'];
-  onDragMove?: Events<T>['dragmove'];
-  onDragOver?: Events<T>['dragover'];
-  onDragEnd?: Events<T>['dragend'];
+    onBeforeDragStart?: Events<T>['beforedragstart'];
+    onCollision?: Events<T>['collision'];
+    onDragStart?: Events<T>['dragstart'];
+    onDragMove?: Events<T>['dragmove'];
+    onDragOver?: Events<T>['dragover'];
+    onDragEnd?: Events<T>['dragend'];
 }
 
 /**
@@ -32,57 +32,57 @@ export interface UseDragDropMonitorProps<T extends Data = Data> {
  * @returns A disposer function that can be called to cleanup event listeners
  */
 export function useDragDropMonitor<T extends Data = Data>(
-  props: UseDragDropMonitorProps<T>,
+    props: UseDragDropMonitorProps<T>
 ): () => void {
-  const [local, handlers] = splitProps(props, ['manager']);
-  const manager = createMemo(() => local.manager ?? useDragDropManager());
+    const [local, handlers] = splitProps(props, ['manager']);
+    const manager = createMemo(() => local.manager ?? useDragDropManager());
 
-  if (!manager()) {
-    console.warn(
-      'useDndMonitor hook was called outside of a DragDropProvider. '
-      + 'Make sure your app is wrapped in a DragDropProvider component.',
-    );
+    if (!manager()) {
+        console.warn(
+            'useDndMonitor hook was called outside of a DragDropProvider. '
+            + 'Make sure your app is wrapped in a DragDropProvider component.'
+        );
 
-    return () => {};
-  }
-
-  let cleanupFns: CleanupFunction[] = [];
-
-  const disposer = () => {
-    cleanupFns.forEach((cleanup) => cleanup?.());
-    cleanupFns = [];
-  };
-
-  createEffect(() => {
-    const monitor = manager()?.monitor;
-
-    if (!monitor) {
-      return;
+        return () => {};
     }
 
-    cleanupFns = Object.entries(handlers).reduce<CleanupFunction[]>(
-      (acc, [handlerName, handler]) => {
-        if (handler) {
-          // Convert handler name (e.g. 'onDragStart') to event name (e.g. 'dragstart')
-          const eventName = handlerName
-            .replace(/^on/, '')
-            .toLowerCase() as keyof Events<T>;
+    let cleanupFns: CleanupFunction[] = [];
 
-          acc.push(
-            monitor.addEventListener(
-              eventName,
-              handler,
-            ),
-          );
+    const disposer = () => {
+        cleanupFns.forEach(cleanup => cleanup?.());
+        cleanupFns = [];
+    };
+
+    createEffect(() => {
+        const monitor = manager()?.monitor;
+
+        if (!monitor) {
+            return;
         }
 
-        return acc;
-      },
-      [],
-    );
+        cleanupFns = Object.entries(handlers).reduce<CleanupFunction[]>(
+            (acc, [handlerName, handler]) => {
+                if (handler) {
+                    // Convert handler name (e.g. 'onDragStart') to event name (e.g. 'dragstart')
+                    const eventName = handlerName
+                        .replace(/^on/, '')
+                        .toLowerCase() as keyof Events<T>;
 
-    onCleanup(disposer);
-  });
+                    acc.push(
+                        monitor.addEventListener(
+                            eventName,
+                            handler
+                        )
+                    );
+                }
 
-  return disposer;
+                return acc;
+            },
+            []
+        );
+
+        onCleanup(disposer);
+    });
+
+    return disposer;
 }
